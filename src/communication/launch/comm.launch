@@ -1,0 +1,9 @@
+<launch>
+
+<node pkg="nrfcomm" type="rightnrfcomm.py" name="nrfbnoright" respawn="true" output="screen"> </node>
+
+<node pkg="nrfcomm" type="leftnrfcomm.py"  name="nrfbnoleft"  respawn="true" output="screen" > </node>
+
+<node pkg="nrfcomm" type="sticknrfcomm.py" name="nrfbnostick" respawn="true" output="screen" > </node>
+
+</launch>
