@@ -7,17 +7,17 @@
 from selenium import webdriver
 import os
 
-chromedriver="/home/shubh/python/chromedriver"
+chromedriver="/path/to/chromedriver"  #install chromedriver and add path here
 os.environ["webdriver.chrome.driver"]=chromedriver
 browser=webdriver.Chrome(chromedriver)
 
 browser.get("http://site24.way2sms.com/content/index.html")
 
 mobEle=browser.find_element_by_xpath(".//*[@id='Login']/div[2]/form/div[1]/input")
-mobEle.send_keys('9933988118')
+mobEle.send_keys('*****') #Add mobile number for delievering message
 
 passEle=browser.find_element_by_xpath(".//*[@id='Login']/div[2]/form/div[2]/input")
-passEle.send_keys('blackhole')
+passEle.send_keys('*****') #add password here in quotes
 passEle.submit()
 
 smsEle=browser.find_element_by_xpath(".//*[@id='ebFrm']/div[2]/div[1]/input")
