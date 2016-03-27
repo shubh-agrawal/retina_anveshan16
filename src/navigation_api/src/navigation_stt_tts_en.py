@@ -81,9 +81,10 @@ def ask_for_user_data():
 			user_defined_data_dict['USER_SET_DESTINATION']=user_set_destination
 			break
 
-	while 1:	
+	#For generalized more of transports only. Now default is walking.
+	'''while 1:	
 		espeak.synth("Enter the mode of transport, Available options are driving, bicycling, walking. ")
-		mode=stt_serial_input("Enter the mode of transport. Empty input defaults to driving. Available options driving, bicycling, walking:")
+		mode=stt_serial_input("Enter the mode of transport. Available options driving, bicycling, walking:")
 		if len(mode)<=1:
 			mode="driving"
 			print "mode of transports defaults to driving"
@@ -96,10 +97,11 @@ def ask_for_user_data():
 			user_defined_data_dict['USER_SET_MODE']=mode
 			break
 		else:
-			print "Something went wrong. Its a typo or speech mistake. Enter data once again"
-			espeak.synth("Something went wrong. Its a typo or speech mistake. Enter data once again")
+			print "Something went wrong. Enter data once again"
+			espeak.synth("Something went wrong. Enter data once again")
 			continue
-
+	'''
+	user_defined_data_dict['USER_SET_MODE']='walking'
 	return user_defined_data_dict
 
 
@@ -134,24 +136,24 @@ def get_primary_data(raw_data):
 	primary_data_dict['total_duration']=tree.find('.//leg/duration/text').text
 
 	print "Please confirm the following details and proceed"
-	espeak.synth("Please confirm the following details and proceed")
+	#espeak.synth("Please confirm the following details and proceed")
 
 	print "Start address :",primary_data_dict['start_address_api_set']
-	espeak.synth("Start address is ")
-	time.sleep(2)
-	espeak.synth(primary_data_dict['start_address_api_set'])
+	#espeak.synth("Start address is ")
+	#time.sleep(2)
+	#espeak.synth(primary_data_dict['start_address_api_set'])
 
 	print "End address :",primary_data_dict['end_address_api_set']
-	espeak.synth("End address is ")
-	time.sleep(2)
-	espeak.synth(primary_data_dict['end_address_api_set'])
+	#espeak.synth("End address is ")
+	#time.sleep(2)
+	#espeak.synth(primary_data_dict['end_address_api_set'])
 	
 	print "Total time of travel is ",primary_data_dict['total_duration']
 	
 	print "Total distance to destination :",primary_data_dict['total_distance']
 
 	time.sleep(1)
-	espeak.synth(" Confirm for the above printed data with Y (if yes) or N (if no).")
+	espeak.synth(" Confirm for the data with Y or N.")
 	
 	confirm_tag=stt_serial_input("Confirm for the above printed data with Y (if yes) or N (if no).")
 	if confirm_tag=='Y' or confirm_tag=='y' or confirm_tag=='' or confirm_tag=='yes':
@@ -226,8 +228,8 @@ def listener():
 	rospy.Subscriber("gpsLocation", String, gpscallback)
 	rospy.spin()
 
-get_primary_data(call_google_api(ask_for_user_data()))
-get_steps_navigation(confirmed_data)
+#get_primary_data(call_google_api(ask_for_user_data()))
+#get_steps_navigation(confirmed_data)
 
 if __name__ == '__main__':
 	get_primary_data(call_google_api(ask_for_user_data()))

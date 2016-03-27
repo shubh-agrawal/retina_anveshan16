@@ -23,8 +23,8 @@ if __name__ == '__main__':
             decoded = (value%100000)/100.0
             index = value/100000    
 
-            print index
-#            rospy.loginfo("raw data received:"+str(raw_data[0]))
+            print decoded
+            #rospy.loginfo("raw data received:"+str(raw_data[0]))
             pub.publish(str(raw_data[0]))
             rate.sleep()
 
