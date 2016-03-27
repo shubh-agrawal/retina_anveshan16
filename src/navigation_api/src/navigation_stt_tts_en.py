@@ -226,9 +226,11 @@ def listener():
 	rospy.Subscriber("gpsLocation", String, gpscallback)
 	rospy.spin()
 
-#get_primary_data(call_google_api(ask_for_user_data()))
-#get_steps_navigation(confirmed_data)
+get_primary_data(call_google_api(ask_for_user_data()))
+get_steps_navigation(confirmed_data)
 
 if __name__ == '__main__':
-    listener()
-
+	get_primary_data(call_google_api(ask_for_user_data()))
+	get_steps_navigation(confirmed_data)
+	listener()
+	
