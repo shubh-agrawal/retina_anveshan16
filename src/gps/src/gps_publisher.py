@@ -23,7 +23,7 @@ def pubdata():
     global lati
     global longi
     global pub
-    coord = lati + '$' + longi + '@'
+    coord = lati + '%' + longi + '@'
 
     rospy.loginfo("Latitude : " + lati + "Longtitude : " + longi + " |" )
     pub.publish(coord)
