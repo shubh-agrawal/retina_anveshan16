@@ -36,8 +36,8 @@ def getGPSdata():
     if extFlag is 1:
         extFlag       = 0
         dictgps       = desiredstring.split(',')
-        lati          = (dictgps[2])
-        longi         = (dictgps[4])
+        lati          = str(float(dictgps[2])/100.0)
+        longi         = str(float(dictgps[4])/100.0)
         desiredstring = ""
         pubdata()
         
