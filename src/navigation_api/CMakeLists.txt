@@ -7,9 +7,27 @@ project(navigation_api)
 
 include_directories(${catkin_INCLUDE_DIRS} ${PYTHON_INCLUDE_DIRS} src)
 
-find_package(catkin REQUIRED COMPONENTS message_generation rospy std_msgs geometry_msgs) 
+find_package(catkin REQUIRED COMPONENTS 
+    message_generation 
+    rospy 
+    std_msgs 
+    geometry_msgs
+) 
+
+add_message_files(
+    FILES
+    navigation_msg.msg
+)
+
+generate_messages(
+    DEPENDENCIES
+    std_msgs
+    geometry_msgs
+)
+
 
 catkin_package(
-        CATKIN_DEPENDS rospy roscpp std_msgs INCLUDE_DIRS src)
+        CATKIN_DEPENDS message_runtime rospy roscpp std_msgs INCLUDE_DIRS src
+)
 
 catkin_package()
