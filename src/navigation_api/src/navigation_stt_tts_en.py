@@ -7,6 +7,13 @@
 # espeak.synth("String to be TTS converted")
 # for chnging property of voice refer to http://espeak.sourceforge.net/voices.html
 
+# The lat_lng_list will contain target waypoints excluding source co-rodinates
+# bearing set will contain heading angles starting from source to first waypoint 
+# It might not be necessary that the user is exactly at source. Since source is refined from google map api. 
+# So the actual heading along which it will have to move, might be different from first of bearing set.
+
+# Solution: Get the first heading from current gps location (as it will be its initial location), and later after waypoint 2, gett follow bearing set quatities
+
 
 import rospy
 from std_msgs.msg import String
@@ -19,9 +26,13 @@ import xml.etree.ElementTree as ET
 import math
 
 import serial,time
-ser=serial.Serial('/dev/ttyUSB0',baudrate=9600,timeout=None)
+ser=serial.Serial('/dev/ttyUSB1',baudrate=9600,timeout=None)
 
 from espeak import espeak
+
+from geopy.geocoders import Nominatim
+from geopy.distance import vincenty
+geolocator = Nominatim()
 
 api_key="AIzaSyB68uuzp_wq_Fjs-bVW8NMXUklRNIxGiks"
 website_comm="https://maps.googleapis.com/maps/api/directions/xml?"
@@ -33,6 +44,7 @@ primary_data_dict={}
 confirmed_data=""   # This data is user confirmed that can be used by other functions#
 
 current_gps_location=(-1,-1)
+waypoint_index = 0
 
 def stt_serial_input(str_output):
 	"A custom function for stt newline character #. Taken advantage of reading one byte"
@@ -63,7 +75,7 @@ def ask_for_user_data():
 	user_defined_data_dict={}
 
 	while len(user_set_origin)<=1:
-		espeak.synth("Enter the origin, or beginning point. ")
+		#espeak.synth("Enter the origin, or beginning point. ")
 		user_set_origin=stt_serial_input("Enter the origin or beginning point:")
 		if len(user_set_origin)<=1:
 			print "This field cannot be left blank"
@@ -73,7 +85,7 @@ def ask_for_user_data():
 			break
 
 	while len(user_set_destination)<=1:	
-		espeak.synth("Enter the destination or the end point. ")
+		#espeak.synth("Enter the destination or the end point. ")
 		user_set_destination=stt_serial_input("Enter the destination or the end point:")	
 		if len(user_set_destination)<=1:
 			print "This field cannot be left blank"
@@ -154,7 +166,7 @@ def get_primary_data(raw_data):
 	print "Total distance to destination :",primary_data_dict['total_distance']
 
 	time.sleep(1)
-	espeak.synth(" Confirm for the data with Y or N.")
+	#espeak.synth(" Confirm for the data with Y or N.")
 	
 	confirm_tag=stt_serial_input("Confirm for the above printed data with Y (if yes) or N (if no).")
 	if confirm_tag=='Y' or confirm_tag=='y' or confirm_tag=='' or confirm_tag=='yes':
@@ -212,6 +224,31 @@ def get_steps_navigation(raw_data):     #must be given confirmed_data variable o
 	
 	return navigation_dict
 
+def update_next_waypoint_publish():
+	global waypoint_index
+	nav_msg = navigation_msg()
+	nav_msg.start_point  = primary_data_dict['start_address_api_set']
+	nav_msg.destination = primary_data_dict['end_address_api_set']
+
+	location = geolocator.reverse(""+str(current_gps_location[0])+","+str(current_gps_location[1]))
+	nav_msg.current_address = location.address
+	print "Current address: ", location.address
+
+	next_waypoint = navigation_dict['target_lat_lng_list'][waypoint_index]
+	distance = vincenty(current_gps_location, next_waypoint).meters
+	
+	if (distance <= 12.00):
+		waypoint_index= waypoint_index+1
+	
+	else:
+		print "Distance: ",distance
+		if (waypoint_index==0):
+			nav_msg.target_heading = bearing_calculator(current_gps_location, next_waypoint)
+		else:
+			nav_msg.target_heading = navigation_dict['target_bearing_angle_list'][waypoint_index]
+	
+	pub.publish(nav_msg)
+
 def string_parse(gps_str):
 	lat=re.findall('(.*?)%',gps_str)	
 	lng=re.findall('%(.*?)@',gps_str)
@@ -220,26 +257,15 @@ def string_parse(gps_str):
 
 def gpscallback(gps_data):
 	global current_gps_location
-	current_gps_location=string_parse(gps_data.data)  
-	rospy.loginfo("Current GPS Location: %s",current_gps_location)
-	publisher()
-	#print current_gps_location
+	current_gps_location=string_parse(gps_data.data)                        # It is in tuple format
+	#rospy.loginfo("Current GPS Location: %s",current_gps_location)
+	update_next_waypoint_publish()	
 
 def listener():
 	rospy.init_node('navigation_api_stt', anonymous=True)
 	rospy.Subscriber("gpsLocation", String, gpscallback)
 	rospy.spin()
 
-#get_primary_data(call_google_api(ask_for_user_data()))
-#get_steps_navigation(confirmed_data)
-
-def publisher():
-	nav_msg = navigation_msg()
-	nav_msg.target_heading =  navigation_dict['target_bearing_angle_list'][0]
-	nav_msg.start_point  = primary_data_dict['start_address_api_set']
-	nav_msg.destination = primary_data_dict['end_address_api_set']
-	pub.publish(nav_msg)
-	 
 pub=rospy.Publisher('navigation_api_data', navigation_msg, queue_size=100)
 rospy.init_node('navigation_api_stt', anonymous = True)
 
