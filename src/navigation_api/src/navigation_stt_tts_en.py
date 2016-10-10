@@ -10,6 +10,7 @@
 
 import rospy
 from std_msgs.msg import String
+from navigation_api.msg import navigation_msg
 
 import re
 import urllib
@@ -221,6 +222,7 @@ def gpscallback(gps_data):
 	global current_gps_location
 	current_gps_location=string_parse(gps_data.data)  
 	rospy.loginfo("Current GPS Location: %s",current_gps_location)
+	publisher()
 	#print current_gps_location
 
 def listener():
@@ -231,8 +233,18 @@ def listener():
 #get_primary_data(call_google_api(ask_for_user_data()))
 #get_steps_navigation(confirmed_data)
 
+def publisher():
+	nav_msg = navigation_msg()
+	nav_msg.target_heading =  navigation_dict['target_bearing_angle_list'][0]
+	nav_msg.start_point  = primary_data_dict['start_address_api_set']
+	nav_msg.destination = primary_data_dict['end_address_api_set']
+	pub.publish(nav_msg)
+	 
+pub=rospy.Publisher('navigation_api_data', navigation_msg, queue_size=100)
+rospy.init_node('navigation_api_stt', anonymous = True)
+
 if __name__ == '__main__':
 	get_primary_data(call_google_api(ask_for_user_data()))
-	get_steps_navigation(confirmed_data)
+	navigation_dict = get_steps_navigation(confirmed_data)
 	listener()
 	
