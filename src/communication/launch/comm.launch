@@ -6,4 +6,6 @@
 
 <node pkg="nrfcomm" type="sticknrfcomm.py" name="nrfbnostick" respawn="true" output="screen" > </node>
 
+<node pkg="nrfcomm" type="nrfsender.py"    name="nrfsender"   respawn="true" output="screen" > </node>
+
 </launch>
