@@ -7,8 +7,8 @@ project(webdoda)
 
 include_directories(${catkin_INCLUDE_DIRS} ${PYTHON_INCLUDE_DIRS} src)
 
-find_package(catkin REQUIRED COMPONENTS message_generation rospy std_msgs)
+find_package(catkin REQUIRED COMPONENTS message_generation rospy std_msgs navigation_api)
 
 catkin_package(
-	CATKIN_DEPENDS rospy roscpp std_msgs geometry_msgs INCLUDE_DIRS src)
+	CATKIN_DEPENDS rospy roscpp std_msgs navigation_api geometry_msgs INCLUDE_DIRS src)
 
