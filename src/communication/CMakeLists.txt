@@ -7,9 +7,16 @@ project(nrfcomm)
 
 include_directories(${catkin_INCLUDE_DIRS} ${PYTHON_INCLUDE_DIRS} src)
 
-find_package(catkin REQUIRED COMPONENTS message_generation rospy std_msgs geometry_msgs) 
+find_package(catkin REQUIRED COMPONENTS
+    message_generation
+    rospy 
+    std_msgs
+    geometry_msgs
+    navigation_api
+) 
 
 catkin_package(
-        CATKIN_DEPENDS rospy roscpp std_msgs INCLUDE_DIRS src)
+        CATKIN_DEPENDS rospy roscpp std_msgs navigation_api INCLUDE_DIRS src
+)
 
 catkin_package()
