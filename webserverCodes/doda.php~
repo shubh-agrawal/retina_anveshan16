@@ -93,9 +93,6 @@ function myMap() {
 
 }
 </script>
-<head>
-<meta http-equiv="refresh" content="5" >
-</head>
 
 <body onload="myMap()">
 
