@@ -109,13 +109,13 @@ var customIcons = {
         icon: 'http://labs.google.com/ridefinder/images/mm_20_red.png'
       },
       3: {
-        icon: 'http://labs.google.com/ridefinder/images/mm_20_blue.png'
+        icon: 'http://labs.google.com/ridefinder/images/mm_20_brown.png'
       },
       4: {
-        icon: 'http://labs.google.com/ridefinder/images/mm_20_red.png'
+        icon: 'http://labs.google.com/ridefinder/images/mm_20_yellow.png'
       },
       5: {
-        icon: 'http://labs.google.com/ridefinder/images/mm_20_blue.png'
+        icon: 'http://labs.google.com/ridefinder/images/mm_20_green.png'
       }
     };
 
