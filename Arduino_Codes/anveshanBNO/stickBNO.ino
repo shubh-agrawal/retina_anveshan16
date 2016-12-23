@@ -2,34 +2,14 @@
     #include <Adafruit_Sensor.h>
     #include <Adafruit_BNO055.h>
     #include <utility/imumaths.h>
+    #include <SPI.h>
+    #include <Mirf.h>
+    #include <nRF24L01.h>
+    #include <MirfHardwareSpiDriver.h>
 
-    /* This driver uses the Adafruit unified sensor library (Adafruit_Sensor),
-       which provides a common 'type' for sensor data and some helper functions.
-       
-       To use this driver you will also need to download the Adafruit_Sensor
-       library and include it in your libraries folder.
-
-       You should also assign a unique ID to this sensor for use with
-       the Adafruit Sensor API so that you can identify this particular
-       sensor in any data logs, etc.  To assign a unique ID, simply
-       provide an appropriate value in the constructor below (12345
-       is used by default in this example).
-       
-       Connections
-       ===========
-       Connect SCL to analog 5
-       Connect SDA to analog 4
-       Connect VDD to 3-5V DC
-       Connect GROUND to common ground
-       
-       History
-       =======
-       2015/MAR/03  - First release (KTOWN)
-       2015/Mar/12  - Dave's mod - calibration
-    */
-
+    
     /* Set the delay between fresh samples */
-    #define BNO055_SAMPLERATE_DELAY_MS (100)
+    #define BNO055_SAMPLERATE_DELAY_MS (85)
        
     Adafruit_BNO055 bno = Adafruit_BNO055(55);
 
@@ -77,9 +57,17 @@
        
       /* Display some basic information on this sensor */
       displaySensorDetails();
-
+      Mirf.cePin = 7;
+  Mirf.csnPin = 8;
+  Mirf.spi = &MirfHardwareSpi;
+  Mirf.init();
+  byte payload[8];
+  Mirf.payload = sizeof(payload);
+  Mirf.channel = 10;
+  Mirf.config();
+  Mirf.setTADDR((byte *)"host2");
       bno.setExtCrystalUse(true); 
-
+      Serial.println("Calibration status values: 0=uncalibrated, 3=fully calibrated");
     }
 
     /**************************************************************************/
@@ -90,12 +78,15 @@
     /**************************************************************************/
     void loop(void)
     {
+      long sender[]={0,0,0};
       /* Get a new sensor event */
       sensors_event_t event;
       bno.getEvent(&event);
     //  getCalStat();                  // Uncomment to get calibration values
-
-     
+ 
+      sender[0]=11*100000+event.orientation.x()*100.0;
+      sender[1]=12*100000+(event.orientation.y()+180)*100.0;
+      sender[2]=13*100000+(event.orientation.z()+180)*100.0;
       /* Display the floating point data */
       Serial.print("X: ");
       Serial.print(event.orientation.x, 4);
@@ -106,6 +97,20 @@
       Serial.println("");
      
       delay(BNO055_SAMPLERATE_DELAY_MS);
+      long temp0 = sender[0];
+      long temp1 = sender[1];
+      long temp2 = sender[2];
+      Mirf.send((byte *)&temp0);
+      while (Mirf.isSending()) {}
+      delay(5);
+      Mirf.send((byte *)&temp1);
+      while (Mirf.isSending()) {}
+      delay(5);
+      Mirf.send((byte *)&temp2);
+      while (Mirf.isSending()) {}
+      delay(5);
+      Serial.println("Finished sending");
+      
      
     }
     void setCal(){
