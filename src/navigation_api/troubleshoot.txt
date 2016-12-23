@@ -1,0 +1,8 @@
+1. Using Audio jack output
+- Ensure that snd_bcm2835 sound card is loaded using "aplay -l"
+- package "pulseaudio" interferes. remove it
+- /boot/config.txt must be added with a line "dtparam=audio=on"
+
+2. https not working in browser and urlib2 [gives ssl error]
+- majorly due to out of sync of date, time between internet and local machine
+- configure using "sudo date --set '2016-12-23 20:10:05'"

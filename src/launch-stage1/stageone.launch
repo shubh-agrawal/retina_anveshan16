@@ -1,0 +1,12 @@
+<launch>
+
+<node pkg="nrfcomm" type="sticknrfcomm.py"      name="nrfbnostick"       respawn="true" output="screen"> </node>
+
+<node pkg="nrfcomm" type="headingcorrection.py" name="headingcorrection" respawn="true" output="screen"> </node>
+
+<node pkg="gps"     type="gps_publisher.py"     name="gps"               respawn="true" output="screen"> </node>
+
+
+
+
+</launch>

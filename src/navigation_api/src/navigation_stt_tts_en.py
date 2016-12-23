@@ -26,7 +26,7 @@ import xml.etree.ElementTree as ET
 import math
 
 import serial,time
-ser=serial.Serial('/dev/ttyUSB1',baudrate=9600,timeout=None)
+ser=serial.Serial('/dev/ttyUSB0',baudrate=9600,timeout=None)
 
 from espeak import espeak
 
@@ -75,7 +75,7 @@ def ask_for_user_data():
 	user_defined_data_dict={}
 
 	while len(user_set_origin)<=1:
-		#espeak.synth("Enter the origin, or beginning point. ")
+		espeak.synth("Enter the origin, or beginning point. ")
 		user_set_origin=stt_serial_input("Enter the origin or beginning point:")
 		if len(user_set_origin)<=1:
 			print "This field cannot be left blank"
@@ -85,7 +85,7 @@ def ask_for_user_data():
 			break
 
 	while len(user_set_destination)<=1:	
-		#espeak.synth("Enter the destination or the end point. ")
+		espeak.synth("Enter the destination or the end point. ")
 		user_set_destination=stt_serial_input("Enter the destination or the end point:")	
 		if len(user_set_destination)<=1:
 			print "This field cannot be left blank"
@@ -152,12 +152,12 @@ def get_primary_data(raw_data):
 	#espeak.synth("Please confirm the following details and proceed")
 
 	print "Start address :",primary_data_dict['start_address_api_set']
-	#espeak.synth("Start address is ")
+	espeak.synth("Start address is ")
 	#time.sleep(2)
 	#espeak.synth(primary_data_dict['start_address_api_set'])
 
 	print "End address :",primary_data_dict['end_address_api_set']
-	#espeak.synth("End address is ")
+	espeak.synth("End address is ")
 	#time.sleep(2)
 	#espeak.synth(primary_data_dict['end_address_api_set'])
 	
@@ -166,7 +166,7 @@ def get_primary_data(raw_data):
 	print "Total distance to destination :",primary_data_dict['total_distance']
 
 	time.sleep(1)
-	#espeak.synth(" Confirm for the data with Y or N.")
+	espeak.synth(" Confirm for the data with Y or N.")
 	
 	confirm_tag=stt_serial_input("Confirm for the above printed data with Y (if yes) or N (if no).")
 	if confirm_tag=='Y' or confirm_tag=='y' or confirm_tag=='' or confirm_tag=='yes':
@@ -233,15 +233,21 @@ def update_next_waypoint_publish():
 	location = geolocator.reverse(""+str(current_gps_location[0])+","+str(current_gps_location[1]))
 	nav_msg.current_address = location.address
 	print "Current address: ", location.address
-
+	
 	next_waypoint = navigation_dict['target_lat_lng_list'][waypoint_index]
 	distance = vincenty(current_gps_location, next_waypoint).meters
 	
-	if (distance <= 12.00):
+	nav_msg.target_crdnts = str(navigation_dict['target_lat_lng_list'][-1][0]) + "%" + str(navigation_dict['target_lat_lng_list'][-1][1]) + "@"
+	if (distance <= 15.00):
 		waypoint_index= waypoint_index+1
-	
+		if (waypoint_index >= len(navigation_dict['target_lat_lng_list'])):
+			rospy.signal_shutdown("Destination reached")  # Ends Ros code cleanly and exits main.
+			print "Destination Reached"
+			espeak.synth("You have reached the Destination.")
+			
 	else:
 		print "Distance: ",distance
+		print "Next Waypoint: ", next_waypoint
 		if (waypoint_index==0):
 			nav_msg.target_heading = bearing_calculator(current_gps_location, next_waypoint)
 		else:
@@ -273,4 +279,3 @@ if __name__ == '__main__':
 	get_primary_data(call_google_api(ask_for_user_data()))
 	navigation_dict = get_steps_navigation(confirmed_data)
 	listener()
-	
