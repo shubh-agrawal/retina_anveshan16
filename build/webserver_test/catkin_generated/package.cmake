@@ -1,7 +1,0 @@
-set(_CATKIN_CURRENT_PACKAGE "webdoda")
-set(webdoda_MAINTAINER "pi <satan@hell.inferno>")
-set(webdoda_DEPRECATED "")
-set(webdoda_VERSION "666.666.666")
-set(webdoda_BUILD_DEPENDS "rospy" "roscpp" "std_msgs" "geometry_msgs" "navigation_api")
-set(webdoda_RUN_DEPENDS "rospy" "roscpp" "std_msgs" "geometry_msgs" "navigation_api")
-set(webdoda_BUILDTOOL_DEPENDS "catkin")

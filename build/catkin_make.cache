@@ -1,2 +1,0 @@
-communication:geometry_msgs:gps:navigation_api:webserver_test
--DCATKIN_DEVEL_PREFIX=/home/pi/doda_ws/devel -DCMAKE_INSTALL_PREFIX=/home/pi/doda_ws/install -G Unix Makefiles
