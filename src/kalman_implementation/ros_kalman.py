@@ -15,45 +15,53 @@ truth_longitude=87
 Q = 1e-5 # process variance
 
 # allocate space for arrays
-xhat=np.zeros(sz)      # a posteri estimate of x
-P=np.zeros(sz)         # a posteri error estimate
-xhatminus=np.zeros(sz) # a priori estimate of x
-Pminus=np.zeros(sz)    # a priori error estimate
-K=np.zeros(sz)         # gain or blending factor
-PhatprevX=0
+xhatX=np.zeros(sz)      # a posteri estimate of x
+PX=np.zeros(sz)         # a posteri error estimate
+xhatminusX=np.zeros(sz) # a priori estimate of x
+PminusX=np.zeros(sz)    # a priori error estimate
+KX=np.zeros(sz)         # gain or blending factor
+
+xhatY=np.zeros(sz)      # a posteri estimate of x
+PY=np.zeros(sz)         # a posteri error estimate
+xhatminusY=np.zeros(sz) # a priori estimate of x
+PminusY=np.zeros(sz)    # a priori error estimate
+KY=np.zeros(sz)         # gain or blending factor
+
+PprevX=0
 XhatprevX=0
-PhatprevY=0
+PprevY=0
 XhatprevY=0
 
 R = 0.1**2 # estimate of measurement variance, change to see effect
 
-# intial guesses
+# intial guesses 
 xhat[0] = 0.0
 P[0] = 1.0
 
 
 def angleCallback(angle_data):
-	# time update
-	xhatminus[0] = xhatprevX
-    Pminus[0] = PminusprevX+Q
 
-    # measurement update
-    K[0] = Pminus[0]/( Pminus[0]+R )
-    xhat[k] = xhatminus[0]+K[0]*(angle_data.x-xhatminus[0])
-    P[k] = (1-K[0])*Pminus[0]
-    xhatprev=xhat[0]
-    Pminusprev=Pminus[0]
+	# time update X
+	xhatminusX[0] = xhatprevX
+    PminusX[0] = PprevX+Q
 
-    # time update
-	xhatminus[0] = xhatprevY
-    Pminus[0] = PminusprevY+Q
+    # measurement update X
+    KX[0] = PminusX[0]/( PminusX[0]+R )
+    xhat[k] = xhatminusX[0]+KX[0]*(angle_data.x-xhatminusX[0])
+    PX[0] = (1-KX[0])*PminusX[0]
+    xhatprevX=xhatX[0]
+    PprevX=PminusX[0]
 
-    # measurement update
-    K[0] = Pminus[0]/( Pminus[0]+R )
-    xhat[k] = xhatminus[0]+K[0]*(angle_data.x-xhatminus[0])
-    P[k] = (1-K[0])*Pminus[0]
-    xhatprev=xhat[0]
-    Pminusprev=Pminus[0]
+    # time update Y
+	xhatminusY[0] = xhatprevY
+    PminusY[0] = PprevY+Q
+
+    # measurement update Y
+    KY[0] = PminusY[0]/( PminusY[0]+R )
+    xhatY[k] = xhatminusY[0]+KY[0]*(angle_data.y-xhatminusY[0])
+    PY[k] = (1-KY[0])*PminusY[0]
+    xhatprevY=xhatY[0]
+    PprevY=PminusY[0]
 
 def gpsCallback(gps_data):
 	sep1 = gps_data.find('%')
