@@ -29,15 +29,16 @@ def serialCallback_pub():
     lati = re.findall('GPGGA,.*?,([0.0-9.0]+),', input_str)
     longi = re.findall('GPGGA,.*?N,([0.0-9.0]+),E', input_str)
 
-    if len(lati) != 0 or len(longi) != 0:
-        latitude = int(float(lati[0])/100) + (float(lati[0]) - (int(float(lati[0])/100.00))*100)/60.0
-	longitude = int(float(longi[0])/100) + (float(longi[0]) - (int(float(longi[0])/100.00))*100)/60.0
+    if len(lati) != 0 and len(longi) != 0:
+            if float(lati[0]) > 0 and float(longi[0]) > 0:
+                latitude = int(float(lati[0])/100) + (float(lati[0]) - (int(float(lati[0])/100.00))*100)/60.0
+	        longitude = int(float(longi[0])/100) + (float(longi[0]) - (int(float(longi[0])/100.00))*100)/60.0
  
-        latitude_s = format(latitude, '.8f')
-        longitude_s = format(longitude, '.8f')
-        coord = latitude_s + '%' + longitude_s + '@'
-        rospy.loginfo("Latitude : " + latitude_s + "Longtitude : " + longitude_s + " |" )
-        pub.publish(coord)
+                latitude_s = format(latitude, '.8f')
+                longitude_s = format(longitude, '.8f')
+                coord = latitude_s + '%' + longitude_s + '@'
+                rospy.loginfo("Latitude : " + latitude_s + "Longtitude : " + longitude_s + " |" )
+                pub.publish(coord)
 
 if __name__ == '__main__':
     
