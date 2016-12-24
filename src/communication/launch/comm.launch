@@ -4,8 +4,10 @@
 
 <node pkg="nrfcomm" type="leftnrfcomm.py"          name="nrfbnoleft"          respawn="true" output="screen" > </node>
 
-<node pkg="nrfcomm" type="sticknrfcomm.py"         name="nrfbnostick"         respawn="true" output="screen" > </node>
+<node pkg="nrfcomm" type="boxnrfcomm.py"           name="nrfbox"              respawn="true" output="screen" > </node>
 
 <node pkg="nrfcomm" type="headingcorrection.py"    name="headingcorrection"   respawn="true" output="screen" > </node>
+
+<node pkg="nrfcomm" type="sticknrfcomm.py"         name="nrfstick"            respawn="true" output="screen" > </node> 
 
 </launch>

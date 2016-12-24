@@ -11,6 +11,7 @@ nrf.setRADDR("host2")
 x = -1
 y = -1
 z = -1
+step_length = -1
 raw_data = [0,-1,-1,-1,-1,-1,-1,-1]
 pub = rospy.Publisher('rightlegAngles', Point32, queue_size=100)
 
@@ -31,9 +32,10 @@ if __name__ == '__main__':
                 y = decoded - 180
             elif index is 13:
                 z = decoded - 180  
-
-            rospy.loginfo(" right x : " + str(x) + " | right y : " + str(y) + " | right z : " + str(z))
-            data = Point32(x,y,z)
+            elif index is 14:
+                step_length = decoded 
+            rospy.loginfo(" right x : " + str(x) + " | right y : " + str(y) + " | step_length : " + str(step_length))
+            data = Point32(x,y,step_length)
             pub.publish(data)
             rate.sleep()
 
