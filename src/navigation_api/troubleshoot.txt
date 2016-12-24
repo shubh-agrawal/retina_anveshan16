@@ -6,3 +6,15 @@
 2. https not working in browser and urlib2 [gives ssl error]
 - majorly due to out of sync of date, time between internet and local machine
 - configure using "sudo date --set '2016-12-23 20:10:05'"
+
+3. Earlier versions of RPI used ttyAMA0 as hardware serial. However in RPI 3, ttyAMA0 
+is used as bluetooth controller and ttyS0 is used for serial. This ttyS0 is software controlled
+rather than hardware and hence seems slow in working. 
+So I have changed /boot/config.txt and added a line dt_param=pi3-disable-bt which brings 
+ttyAMA0 back to hardware rules and bluetooth serial is blocked. Now, serials
+can be handled on hardware serial. Also command "sudo systemctl disable hciuart"
+is necessary.
+
+4. At boot up, the serial ttyAMA0 gets accesed by terminal console for debugging 
+purpose. This might cause problem while other peripherals are connected to serial
+port.
