@@ -13,7 +13,7 @@ y = -1
 z = -1
 w = -1
 raw_data = [-1,-1,-1,-1,-1,-1,-1,-1]
-pub = rospy.Publisher('stickAngles', Quaternion, queue_size=100)
+pub = rospy.Publisher('boxAngles', Quaternion, queue_size=100)
 
 if __name__ == '__main__':
 
