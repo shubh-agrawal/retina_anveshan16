@@ -1,0 +1,8 @@
+prefix=/home/pi/doda_ws/devel
+
+Name: webdoda
+Description: Description of webdoda
+Version: 666.666.666
+Cflags: -I/home/pi/doda_ws/src/webserver_test/src
+Libs: -L/home/pi/doda_ws/devel/lib 
+Requires: rospy roscpp std_msgs navigation_api geometry_msgs

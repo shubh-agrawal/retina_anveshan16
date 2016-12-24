@@ -1,0 +1,7 @@
+set(_CATKIN_CURRENT_PACKAGE "gps")
+set(gps_MAINTAINER "pi <satan@hell.inferno>")
+set(gps_DEPRECATED "")
+set(gps_VERSION "6.6.6")
+set(gps_BUILD_DEPENDS "rospy" "roscpp" "std_msgs" "geometry_msgs")
+set(gps_RUN_DEPENDS "rospy" "roscpp" "std_msgs" "geometry_msgs")
+set(gps_BUILDTOOL_DEPENDS "catkin")
