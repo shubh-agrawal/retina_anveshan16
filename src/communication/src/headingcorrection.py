@@ -5,46 +5,51 @@ from navigation_api.msg import navigation_msg
 from geometry_msgs.msg import Quaternion
 from nrf24 import Nrf24
 
-buzzerPin = 12
-global targetheading = -1
-global currentheading = -1
+buzzerPin = 19
+targetheading = -1
+currentheading = -1
+
 
 def targetcallback(data):
-    rospy.logininfo( "Target Heading : " + str(data.target_heading) + " | " )
-    targetheading = int(data.target_heading*100)
+    global targetheading
+    rospy.loginfo( "Target Heading : " + str(data.target_heading) + " | " )
+    targetheading = data.target_heading
 
 def currentcallback(data):
-    rospy.logininfo( "Current Heading : " + str(data.x) + " | " )
+    rospy.loginfo( "Current Heading : " + str(data.x) + " | "  + "Target Heading" + str(targetheading))
     currentheading = int(data.x)
+    correctHeading(currentheading,targetheading)
 
 def listener():
     rospy.init_node('headingcorrection')
     rospy.Subscriber("navigation_api_data", navigation_msg, targetcallback)
+
+def subs():
     rospy.Subscriber('stickAngles', Quaternion, currentcallback)
-    rospy.spin()
+    rospy.spin()    
 
 def initBuzzer():
-    GPIO.setmode(GPIO.BOARD)
+    GPIO.setmode(GPIO.BCM)
     GPIO.setup(buzzerPin, GPIO.OUT)
 
 
-def correctHeading():
-    if abs(currentheading - targetheading < 10):
+def correctHeading(currentheading,targetheading):
+    if abs(currentheading - targetheading < 50) and targetheading > 0:
         GPIO.output(buzzerPin, GPIO.HIGH)
-    else:
+	rospy.loginfo("buzzer on")
+    else :
+	rospy.loginfo("buzzer off")
         GPIO.output(buzzerPin, GPIO.LOW)
 
 
 
 if __name__ == '__main__':
     initBuzzer()
-
+    listener()
     try:
-        listener()
         rate = rospy.Rate(100)
-        while not rospy.is_shutdown():
-            correctHeading()
-            rate.sleep()
+      	subs()
+        rate.sleep()
 
     except rospy.ROSInterruptException:
         GPIO.cleanup()
