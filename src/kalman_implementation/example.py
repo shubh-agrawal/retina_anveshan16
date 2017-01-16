@@ -1,5 +1,7 @@
+
 import numpy as np
 import matplotlib.pyplot as plt
+
 
 plt.rcParams['figure.figsize'] = (10, 8)
 
@@ -18,7 +20,7 @@ xhatminus=np.zeros(sz) # a priori estimate of x
 Pminus=np.zeros(sz)    # a priori error estimate
 K=np.zeros(sz)         # gain or blending factor
 
-R = 0.15**2 # estimate of measurement variance, change to see effect
+R = 0.1**2 # estimate of measurement variance, change to see effect
 
 # intial guesses
 xhat[0] = 0.0
