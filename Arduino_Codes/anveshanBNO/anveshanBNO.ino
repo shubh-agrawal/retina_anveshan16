@@ -1,4 +1,4 @@
-#include <Wire.h>
+include <Wire.h>
 #include <Adafruit_Sensor.h>
 #include <Adafruit_BNO055.h>
 #include <utility/imumaths.h>
@@ -24,8 +24,8 @@ void setup(void)
   }
 
   delay(1000);
-  Mirf.cePin = 7;
-  Mirf.csnPin = 8;
+  Mirf.cePin = 9;
+  Mirf.csnPin = 10;
   Mirf.spi = &MirfHardwareSpi;
   Mirf.init();
   byte payload[8];
