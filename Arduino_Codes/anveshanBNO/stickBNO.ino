@@ -53,19 +53,19 @@
         while(1);
       }
       setCal();       // Set Calibration Values - Comment out to read calibration values
-      delay(1000);
+      delay(100);
        
       /* Display some basic information on this sensor */
       displaySensorDetails();
-      Mirf.cePin = 7;
-  Mirf.csnPin = 8;
-  Mirf.spi = &MirfHardwareSpi;
-  Mirf.init();
-  byte payload[8];
-  Mirf.payload = sizeof(payload);
-  Mirf.channel = 10;
-  Mirf.config();
-  Mirf.setTADDR((byte *)"host2");
+      Mirf.cePin = 9;
+      Mirf.csnPin = 10;
+      Mirf.spi = &MirfHardwareSpi;
+      Mirf.init();
+      byte payload[8];
+      Mirf.payload = sizeof(payload);
+      Mirf.channel = 10;
+      Mirf.config();
+      Mirf.setTADDR((byte *)"host2");
       bno.setExtCrystalUse(true); 
       Serial.println("Calibration status values: 0=uncalibrated, 3=fully calibrated");
     }
@@ -84,9 +84,9 @@
       bno.getEvent(&event);
     //  getCalStat();                  // Uncomment to get calibration values
  
-      sender[0]=11*100000+event.orientation.x()*100.0;
-      sender[1]=12*100000+(event.orientation.y()+180)*100.0;
-      sender[2]=13*100000+(event.orientation.z()+180)*100.0;
+      sender[0]=31*100000+event.orientation.x*100.0;
+      sender[1]=32*100000+(event.orientation.y+180)*100.0;
+      sender[2]=33*100000+(event.orientation.z+180)*100.0;
       /* Display the floating point data */
       Serial.print("X: ");
       Serial.print(event.orientation.x, 4);
@@ -100,6 +100,7 @@
       long temp0 = sender[0];
       long temp1 = sender[1];
       long temp2 = sender[2];
+      Serial.println("ayka");
       Mirf.send((byte *)&temp0);
       while (Mirf.isSending()) {}
       delay(5);
