@@ -6,8 +6,8 @@
 #include <Mirf.h>
 #include <nRF24L01.h>
 #include <MirfHardwareSpiDriver.h>
-#define POSTHRES 1
-#define NEGTHRES -1
+#define POSTHRES 0.5
+#define NEGTHRES -0.5
 #define LENGTH 80
 
 
@@ -23,9 +23,10 @@ int readings[5] = {0, 0, 0, 0, 0};
 
 long total = 0;
 long average=0;
+long noOfSteps=0;
 
 bool posflag = 0;
-bool negflag = 0;
+bool negflag = 1;
 long readIndex = 0;
 
 /**************************************************************************/
@@ -57,7 +58,7 @@ void displaySensorDetails(void)
 /**************************************************************************/
 void setup(void)
 {
-  Serial.begin(9600);
+  Serial.begin(115200);
   Serial.println("Orientation Sensor Test"); Serial.println("");
 
   /* Initialise the sensor */
@@ -89,7 +90,7 @@ void setup(void)
   for (int i = 0; i < 5; i++)
   {
     bno.getEvent(&event);
-    prevFive[i] = event.orientation.x;
+    prevFive[i] = event.orientation.y;
   }
 }
 
@@ -97,51 +98,51 @@ void setup(void)
 long prevX = 0;
 void loop(void)
 {
-  total = total - readings[readIndex];
+  //total = total - readings[readIndex];
   long sender[4] = {0, 0, 0, 0};
   /* Get a new sensor event */
   sensors_event_t event;
   bno.getEvent(&event);
   //  getCalStat();                  // Uncomment to get calibration values
-  readings[readIndex] = event.orientation.x;
-  total = total + readings[readIndex];
+  //readings[readIndex] = event.orientation.x;
+  //total = total + readings[readIndex];
   readIndex++;
 
   if (readIndex >= 5) {
     readIndex = 0;
   }
 
-  average = total / 5;
+  //average = total / 5;
 
   prevFive[1] = prevFive[0];
   prevFive[2] = prevFive[1];
   prevFive[3] = prevFive[2];
   prevFive[4] = prevFive[3];
-  prevFive[0] = average - prevX;
+  prevFive[0] = event.orientation.y - prevX;
 
   if (negflag == 1 && posflag == 0 && prevFive[0] >= POSTHRES && prevFive[1] >= POSTHRES && prevFive[2] >= POSTHRES && prevFive[3] >= POSTHRES && prevFive[4] >= POSTHRES)
   {
+    //Serial.println("NEGEDGE");
     posflag = 1;
     negflag = 0;
-    sender[0] = 31 * 100000 + average * 100.0;
-    sender[1] = 32 * 100000 + (event.orientation.y + 180) * 100.0;
-    sender[2] = 33 * 100000 + (event.orientation.z + 180) * 100.0;
-    sender[3] = 0;
+    sender[0] = 11 * 100000 + event.orientation.x * 100.0;
+    sender[1] = 12 * 100000 + (event.orientation.y + 180) * 100.0;
+    sender[2] = 13 * 100000 + (event.orientation.z + 180) * 100.0;
+    sender[3] = 14 * 100000;
     /* Display the floating point data */
-    Serial.print("X: ");
+    /*Serial.print("X: ");
     Serial.print(average, 4);
     Serial.print("\tY: ");
     Serial.print(event.orientation.y, 4);
     Serial.print("\tZ: ");
     Serial.print(event.orientation.z, 4);
-    Serial.println("");
+    Serial.println("");*/
 
     delay(BNO055_SAMPLERATE_DELAY_MS);
     long temp0 = sender[0];
     long temp1 = sender[1];
     long temp2 = sender[2];
     long temp3 = sender[3];
-    Serial.println("ayka");
     Mirf.send((byte *)&temp0);
     while (Mirf.isSending()) {}
     delay(5);
@@ -154,34 +155,37 @@ void loop(void)
     Mirf.send((byte *)&temp3);
     while (Mirf.isSending()) {}
     delay(5);
-    Serial.println("Finished sending");
+    //Serial.println("Finished sending");
 
   }
 
   else if (negflag == 0 && posflag == 1 && prevFive[0] <= NEGTHRES && prevFive[1] <= NEGTHRES && prevFive[2] <= NEGTHRES && prevFive[3] <= NEGTHRES && prevFive[4] <= NEGTHRES)
   {
-
+    noOfSteps++;
+    Serial.print("No of steps is \t");
+    Serial.println(noOfSteps);
+    //Serial.println("POSEDGE");
     posflag = 0;
     negflag = 1;
-    sender[0] = 31 * 100000 + average * 100.0;
-    sender[1] = 32 * 100000 + (event.orientation.y + 180) * 100.0;
-    sender[2] = 33 * 100000 + (event.orientation.z + 180) * 100.0;
-    sender[3] = 34 * 100000 + LENGTH * cos(event.orientation.z) * 100.0;
+    sender[0] = 11 * 100000 + event.orientation.x * 100.0;
+    sender[1] = 12 * 100000 + (event.orientation.y + 180) * 100.0;
+    sender[2] = 13 * 100000 + (event.orientation.z + 180) * 100.0;
+    sender[3] = 14 * 100000 + LENGTH * cos(event.orientation.z) * 100.0;
     /* Display the floating point data */
-    Serial.print("X: ");
+    /*Serial.print("X: ");
     Serial.print(average, 4);
     Serial.print("\tY: ");
     Serial.print(event.orientation.y, 4);
     Serial.print("\tZ: ");
     Serial.print(event.orientation.z, 4);
-    Serial.println("");
+    Serial.println("");*/
+    
 
     delay(BNO055_SAMPLERATE_DELAY_MS);
     long temp0 = sender[0];
     long temp1 = sender[1];
     long temp2 = sender[2];
     long temp3 = sender[3];
-    Serial.println("ayka");
     Mirf.send((byte *)&temp0);
     while (Mirf.isSending()) {}
     delay(5);
@@ -194,29 +198,28 @@ void loop(void)
     Mirf.send((byte *)&temp3);
     while (Mirf.isSending()) {}
     delay(5);
-    Serial.println("Finished sending");
+    //Serial.println("Finished sending");
   }
   else
   {
-    sender[0] = 31 * 100000 + average * 100.0;
-    sender[1] = 32 * 100000 + (event.orientation.y + 180) * 100.0;
-    sender[2] = 33 * 100000 + (event.orientation.z + 180) * 100.0;
-    sender[3] = 34 * 100000;
+    sender[0] = 11 * 100000 + event.orientation.x * 100.0;
+    sender[1] = 12 * 100000 + (event.orientation.y + 180) * 100.0;
+    sender[2] = 13 * 100000 + (event.orientation.z + 180) * 100.0;
+    sender[3] = 14 * 100000;
     /* Display the floating point data */
-    Serial.print("X: ");
+    /*Serial.print("X: ");
     Serial.print(average, 4);
     Serial.print("\tY: ");
     Serial.print(event.orientation.y, 4);
     Serial.print("\tZ: ");
     Serial.print(event.orientation.z, 4);
-    Serial.println("");
+    Serial.println("");*/
 
     delay(BNO055_SAMPLERATE_DELAY_MS);
     long temp0 = sender[0];
     long temp1 = sender[1];
     long temp2 = sender[2];
     long temp3 = sender[3];
-    Serial.println("ayka");
     Mirf.send((byte *)&temp0);
     while (Mirf.isSending()) {}
     delay(5);
@@ -229,10 +232,10 @@ void loop(void)
     Mirf.send((byte *)&temp3);
     while (Mirf.isSending()) {}
     delay(5);
-    Serial.println("Finished sending");
+    //Serial.println("Finished sending");
   }
 
-  prevX = average;
+  prevX = event.orientation.y;
 
 
 }
