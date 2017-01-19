@@ -1,3 +1,4 @@
+
 #include <Wire.h>
 #include <Adafruit_Sensor.h>
 #include <Adafruit_BNO055.h>
@@ -286,5 +287,6 @@ void setCal() {
   bno.setMode( bno.OPERATION_MODE_NDOF );    // Put into NDOF Mode
   delay(25);
 }
+
 
 
