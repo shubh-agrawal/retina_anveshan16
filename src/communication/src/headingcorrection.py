@@ -25,7 +25,7 @@ def listener():
     rospy.Subscriber("navigation_api_data", navigation_msg, targetcallback)
 
 def subs():
-    rospy.Subscriber('stickAngles', Quaternion, currentcallback)
+    rospy.Subscriber('boxAngles', Quaternion, currentcallback)
     rospy.spin()    
 
 def initBuzzer():

@@ -1,0 +1,2 @@
+- setup-file:
+    local-name: /home/pi/doda_ws/install/setup.sh

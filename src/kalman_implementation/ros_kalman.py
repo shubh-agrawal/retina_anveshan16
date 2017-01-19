@@ -4,7 +4,7 @@ import rospy
 import numpy as np
 import matplotlib.pyplot as plt
 from geometry_msgs.msg import Point32
-
+from geometry_msgs.msg import Quaternion
 
 # intial parameters
 
@@ -31,6 +31,7 @@ PprevX=0
 XhatprevX=0
 PprevY=0
 XhatprevY=0
+heading=0
 
 R = 0.1**2 # estimate of measurement variance, change to see effect
 
@@ -39,10 +40,13 @@ xhat[0] = 0.0
 P[0] = 1.0
 
 
+def headingCallback(heading_data):
+    heading=heading_data.x
+    
 def angleCallback(angle_data):
 
-	# time update X
-	xhatminusX[0] = xhatprevX
+    # time update X
+    xhatminusX[0] = xhatprevX
     PminusX[0] = PprevX+Q
 
     # measurement update X
@@ -53,7 +57,7 @@ def angleCallback(angle_data):
     PprevX=PminusX[0]
 
     # time update Y
-	xhatminusY[0] = xhatprevY
+    xhatminusY[0] = xhatprevY
     PminusY[0] = PprevY+Q
 
     # measurement update Y
@@ -72,6 +76,7 @@ def gpsCallback(gps_data):
 def loop():
 	rospy.Subscriber("gpsLocation", String, gpsCallback)
 	rospy.Subscriber("leftlegAngles", Point32, angleCallback)
+	rospy.Subscriber("boxAngles", Quaternion, headingCallback)
 
 if __name__ == '__main__':
     try:

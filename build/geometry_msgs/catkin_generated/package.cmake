@@ -1,0 +1,7 @@
+set(_CATKIN_CURRENT_PACKAGE "geometry_msgs")
+set(geometry_msgs_MAINTAINER "Tully Foote <tfoote@osrfoundation.org>")
+set(geometry_msgs_DEPRECATED "")
+set(geometry_msgs_VERSION "1.12.5")
+set(geometry_msgs_BUILD_DEPENDS "message_generation" "std_msgs")
+set(geometry_msgs_RUN_DEPENDS "message_runtime" "std_msgs")
+set(geometry_msgs_BUILDTOOL_DEPENDS "catkin")
