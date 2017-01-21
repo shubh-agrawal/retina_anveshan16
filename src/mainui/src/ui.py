@@ -1,48 +1,51 @@
 #!/usr/bin/env python
 import rospy
 import subprocess
-import espeak
+from espeak import espeak
 from navigation_api.msg import navigation_msg
 from geometry_msgs.msg import Quaternion
 touchCode=0
 prevtouchCode=0
 currMenuNumber=10
+customsmsid = -1
 
 def touchCallback(data):
 #    print "data rec"    
     touchCode= data.w
     global currMenuNumber
     global prevtouchCode
-
+    global customsmsid
     if touchCode == 1 and prevtouchCode != 1:
         currMenuNumber=currMenuNumber-1
 
     if touchCode == 2 and prevtouchCode != 2:
         currMenuNumber=currMenuNumber+1
 
-    prevtouchCode = touchCode
-    rospy.loginfo("touchcode  " + str(touchCode) + " | curr menu no : " +  str(currMenuNumber))
-    touchCode = touchCode - 1
-    if touchCode > 0:
-        executecommand(touchCode)
     
+#    rospy.loginfo("touchcode  " + str(touchCode) + " | curr menu no : " +  str(currMenuNumber))
+    #touchCode = touchCode - 1
+    if touchCode > 0:
+        executecommand(touchCode,prevtouchCode)
+    prevtouchCode = touchCode
 
-def executecommand(touch):
-    if touch == 2:
+def executecommand(touch,prevtouch):
+    if touch == 2 and prevtouch != 2:
        # startlevelone()
         print "Level ONE"
         espeak.synth("LEVEL ONE")
-    elif touch == 3:
-       # startleveltwo()
+    elif touch == 3 and prevtouch != 3:
         print "Level TWO"
         espeak.synth("LEVEL TWO")
-    elif touch == 4:
-       # startlevelthree()
+        startleveltwo()
+    elif touch == 4 and prevtouch != 4:
         print "Level THREE"
         espeak.synth("LEVEL THREE")
-    elif touch == 1:
-        print "Level ONE"
-        espeak.synth("LEVEL ONE")
+        startlevelthree()
+    elif touch == 1 and prevtouch != 1:
+        print "Level ZERO"
+        espeak.synth("LEVEL ZERO")
+        #stopcustom()
+        
 #        rospy.loginfo("Retina Squared : Level One")
     
 def endprocess(prolist,index):
@@ -63,7 +66,10 @@ def listener():
     startlevelzero()
     rospy.spin()
     
-   
+def stopcustom(pid):
+    if (pid != -1):
+        string = 'kill -9 ' + str(pid)
+        p2 = subprocess.Popen(string, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 
 def startlevelzero():
     p1 = subprocess.Popen('rosrun nrfcomm totalnrfcomm.py', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
@@ -78,13 +84,19 @@ def startlevelone():
 
 def startleveltwo():
     p1 = subprocess.Popen('python /home/pi/doda_ws/src/sms_api/danger_alert.py', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    for line in p1.stdout.readlines():
+        print line
+    retval = p1.wait()
+#    subprocess.call("python /home/pi/doda_ws/src/sms_api/danger_alert.py", shell=True)
 
 def endlevelone():
     p1 = subprocess.Popen('rosnode kill /navigation_api_data', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 
 def startlevelthree():
     p1 = subprocess.Popen('python /home/pi/doda_ws/src/sms_api/send_custom_sms.py', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
- 
+    for line in p1.stdout.readlines():
+        print line
+    retval = p1.wait() 
 
 
 
