@@ -1,0 +1,5 @@
+<launch>
+
+<node pkg="mainui" type="ui.py" name="ui"  respawn="true" output="screen"> </node>
+
+</launch>

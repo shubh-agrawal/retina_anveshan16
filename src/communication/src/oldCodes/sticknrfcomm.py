@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import rospy
+#import RPi.GPIO as GPIO
 from geometry_msgs.msg import Quaternion
 from nrf24 import Nrf24
  
@@ -13,12 +14,12 @@ y = -1
 z = -1
 w = -1
 raw_data = [-1,-1,-1,-1,-1,-1,-1,-1]
-pub = rospy.Publisher('boxAngles', Quaternion, queue_size=100)
+pub = rospy.Publisher('stickData', Quaternion, queue_size=100)
 
 if __name__ == '__main__':
 
     try:
-        rospy.init_node('nrfbox')
+        rospy.init_node('nrfstick')
         rate = rospy.Rate(100)
         while not rospy.is_shutdown():
             if nrf.dataReady():
@@ -26,20 +27,20 @@ if __name__ == '__main__':
             value = raw_data[0] + 256*raw_data[1] + 256*256*raw_data[2] + 256*256*256*raw_data[3]            
             decoded = (value%100000)/100.0
             index = value/100000    
-            if   index is 21:
+            if   index is 31:
                 x = decoded
-            elif index is 22:
-                y = decoded - 180
-            elif index is 23:
-                z = decoded - 180
-            elif index is 24:
+            elif index is 34:
                 w = decoded  
 
-            rospy.loginfo(" stick x : " + str(x) + " | stick y :" + str(y) + " | stick z " + str(z) + " | stick w : " + str(w))
+            rospy.loginfo(" stick x : " + str(x) +  " | touch : " + str(w))
             data = Quaternion(x,y,z,w)
             pub.publish(data)
             rate.sleep()
 
     except rospy.ROSInterruptException:
         pass
+    else:
+#        GPIO.cleanup()
+	print "else"
+
 
