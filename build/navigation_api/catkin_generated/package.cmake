@@ -1,7 +1,0 @@
-set(_CATKIN_CURRENT_PACKAGE "navigation_api")
-set(navigation_api_MAINTAINER "pi <shubh.agrawal111@gmail.com>")
-set(navigation_api_DEPRECATED "")
-set(navigation_api_VERSION "0.0.0")
-set(navigation_api_BUILD_DEPENDS "message_generation" "roscpp" "rospy" "std_msgs")
-set(navigation_api_RUN_DEPENDS "message_runtime" "roscpp" "rospy" "std_msgs")
-set(navigation_api_BUILDTOOL_DEPENDS "catkin")

@@ -5,7 +5,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from geometry_msgs.msg import Point32
 from geometry_msgs.msg import Quaternion
-
+from std_msgs.msg import String
+import math
 # intial parameters
 
 sz = (1,) # size of array
@@ -36,47 +37,62 @@ heading=0
 R = 0.1**2 # estimate of measurement variance, change to see effect
 
 # intial guesses 
-xhat[0] = 0.0
-P[0] = 1.0
-
+xhatX[0] = 0.0
+xhatY[0] = 0.0
+PX[0] = 1.0
+PY[0] = 1.0
 
 def headingCallback(heading_data):
+    global heading
     heading=heading_data.x
-    
-def leftLegCallback(leftLegData):
 
+def rightLegCallback(rightLegData):
+
+    global XhatprevX, XhatprevY, PprevX, PprevY, Q
+    global xhatminusX, xhatminusY, PminusX, PminusY, PX, PY, xhatX, xhatY, KX, KY
+    global heading
+    print "xhat"+ str(xhatX[0])
+    print "yhat"+ str(xhatY[0])
     # time update X
-    xhatminusX[0] = xhatprevX
+    xhatminusX[0] = XhatprevX
     PminusX[0] = PprevX+Q
 
     # measurement update X
     KX[0] = PminusX[0]/( PminusX[0]+R )
-    xhat[k] = xhatminusX[0]+KX[0]*(leftLegData.z*cos(heading))
+    xhatX[0] = xhatminusX[0]+KX[0]*(rightLegData.z*math.cos(heading)/1000000.0)
     PX[0] = (1-KX[0])*PminusX[0]
     XhatprevX=xhatX[0]
     PprevX=PminusX[0]
 
     # time update Y
-    xhatminusY[0] = xhatprevY
+    xhatminusY[0] = XhatprevY
     PminusY[0] = PprevY+Q
 
     # measurement update Y
     KY[0] = PminusY[0]/( PminusY[0]+R )
-    xhatY[k] = xhatminusY[0]+KY[0]*(leftLegData.z*sin(heading))
-    PY[k] = (1-KY[0])*PminusY[0]
+    xhatY[0] = xhatminusY[0]+KY[0]*(rightLegData.z*math.sin(heading)/1000000.0)
+    PY[0] = (1-KY[0])*PminusY[0]
     XhatprevY=xhatY[0]
     PprevY=PminusY[0]
 
-def gpsCallback(gps_data):
+def gpsCallback(gps_msg):
+	global XhatprevX, XhatprevY
+        gps_data=gps_msg.data
 	sep1 = gps_data.find('%')
 	sep2 = gps_data.find('@')
-	xhatminusX[0] = gps_data[0:sep1]
-	xhatminusY[0] = gps_data[sep1+1:sep2]
+	XhatprevX = gps_data[0:sep1]
+	XhatprevY = gps_data[sep1+1:sep2]
 
 def loop():
 	rospy.Subscriber("gpsLocation", String, gpsCallback)
-	rospy.Subscriber("rightlegAngles", Point32, leftLegCallback)
+	rospy.Subscriber("rightlegAngles", Point32, rightLegCallback)
 	rospy.Subscriber("boxAngles", Quaternion, headingCallback)
+	#print "x: " + str(xhatX[0]) + "y: " + str(xhatY[0])
+	rospy.init_node('localizer', anonymous=True)
+        rate = rospy.Rate(10)
+        while not rospy.is_shutdown():
+           	
+		rate.sleep()
 
 if __name__ == '__main__':
     try:
