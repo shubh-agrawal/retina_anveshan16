@@ -59,6 +59,6 @@ def gpscallback(gps_data):
 rospy.init_node('danger_alert', anonymous=True)
 rospy.Subscriber("gpsLocation", String, gpscallback)
 
-sleep(3)
+sleep(1)
 send_sms()
 
