@@ -153,20 +153,20 @@ def get_primary_data(raw_data):
 
 	print "Start address :",primary_data_dict['start_address_api_set']
 	espeak.synth("Start address is ")
-	#time.sleep(2)
-	#espeak.synth(primary_data_dict['start_address_api_set'])
+	time.sleep(1)
+	espeak.synth(primary_data_dict['start_address_api_set'])
 
 	print "End address :",primary_data_dict['end_address_api_set']
 	espeak.synth("End address is ")
 	#time.sleep(2)
-	#espeak.synth(primary_data_dict['end_address_api_set'])
+	espeak.synth(primary_data_dict['end_address_api_set'])
 	
 	print "Total time of travel is ",primary_data_dict['total_duration']
 	
 	print "Total distance to destination :",primary_data_dict['total_distance']
 
 	time.sleep(1)
-	espeak.synth(" Confirm for the data with Y or N.")
+	espeak.synth(" Confirm  for  the  data  with  Y or N.")
 	
 	confirm_tag=stt_serial_input("Confirm for the above printed data with Y (if yes) or N (if no).")
 	if confirm_tag=='Y' or confirm_tag=='y' or confirm_tag=='' or confirm_tag=='yes':
@@ -241,10 +241,11 @@ def update_next_waypoint_publish():
 	nav_msg.start_crdnts = str(navigation_dict['target_lat_lng_list'][0][0]) + "%" + str(navigation_dict['target_lat_lng_list'][0][1]) + "@"
 	if (distance <= 15.00):
 		waypoint_index= waypoint_index+1
+		espeak.synth("You  have  reached  a  waypoint")
 		if (waypoint_index >= len(navigation_dict['target_lat_lng_list'])):
 			rospy.signal_shutdown("Destination reached")  # Ends Ros code cleanly and exits main.
 			print "Destination Reached"
-			espeak.synth("You have reached the Destination.")
+			espeak.synth("You  have  reached  the  Destination.")
 			
 	else:
 		print "Distance: ",distance
@@ -280,3 +281,4 @@ if __name__ == '__main__':
 	get_primary_data(call_google_api(ask_for_user_data()))
 	navigation_dict = get_steps_navigation(confirmed_data)
 	listener()
+

@@ -45,6 +45,7 @@ xhatY[0] = 0.0
 PX[0] = 1.0
 PY[0] = 1.0
 
+gpspub=rospy.Publisher("kalmanGPS",String, queue_size=100)
 def headingCallback(heading_data):
     global heading
     heading=heading_data.x
@@ -76,13 +77,16 @@ def rightLegCallback(rightLegData):
 	    PY[0] = (1-KY[0])*PminusY[0]
 	    XhatprevY=xhatY[0]
 	    PprevY=PminusY[0]
-	    #print xhatX[0]
-	    #print xhatY[0]
+	    print xhatX[0]
+	    print xhatY[0]
 
 	    (filtered_latitude, filtered_longitude) = utm.to_latlon(xhatY[0], xhatX[0], utm_zone, utm_zone_name)
 
 	    print "xhat | "+ str(filtered_latitude)
 	    print "yhat | "+ str(filtered_longitude)
+            pubstr=str(filtered_latitude)+"%"+str(filtered_longitude)+"@"
+	    gpspub.publish(pubstr)
+            
 
     prevStep=rightLegData.z
       

@@ -26,12 +26,12 @@ step_length = -0.0
 bpub = rospy.Publisher('boxAngles', Quaternion, queue_size=100)
 spub = rospy.Publisher('stickData', Quaternion, queue_size=100)
 rpub = rospy.Publisher('rightlegAngles', Point32, queue_size=100)
-
+temp_length=0.0
+prev_step_length=0.0
 if __name__ == '__main__':
-
     try:
         rospy.init_node('nrfall')
-        rate = rospy.Rate(25)
+        rate = rospy.Rate(10)
         while not rospy.is_shutdown():
             if nrf.dataReady():
                 raw_data = nrf.getData()
@@ -45,7 +45,7 @@ if __name__ == '__main__':
             elif index is 13:
                 rz = decoded - 180
             elif index is 14:
-                step_length = decoded
+		step_length=decoded
             elif index is 21:
                 bx = decoded  
 	    elif index is 22:
@@ -58,6 +58,12 @@ if __name__ == '__main__':
                 sx = decoded
             elif index is 34:
                 sw = decoded  
+	    
+	    if abs(step_length-prev_step_length) >= 0.1:
+            	prev_step_length = step_length
+            else:
+                step_length = 0
+
             rospy.loginfo(" stick x : " + str(sx) + " | stick y :" + str(sy) + " | stick z " + str(sz) + " | stick w : " + str(sw))
             rospy.loginfo(" box x : " + str(bx) + " | box y :" + str(by) + " | box z " + str(bz) + " | box w : " + str(bw))
             rospy.loginfo(" right x : " + str(rx) + " | right y : " + str(ry) + " | step_length : " + str(step_length))

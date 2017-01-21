@@ -1,0 +1,10 @@
+<launch>
+
+<node pkg="navigation_api" type="headingcorrection.py"         name="headingcorrection'"         respawn="true" > </node>
+
+<node pkg="navigation_api" type="navigation_stt_tts_en.py"        name="navigation_api_stt"              respawn="true" output="screen"  > </node>
+
+  
+
+</launch>
+

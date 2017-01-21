@@ -12,10 +12,11 @@ import sys, re
 username = "9933988118"
 passwd = "blackhole"
 comm_message = "(Danger Alert) at GPS ->"
+message = "(Danger Alert) at GPS ->"
 current_gps_location=(-1,-1)
 number = "9933988118"
 
-comm_message = "+".join(comm_message.split(' '))
+message = "+".join(message.split(' '))
 
 def send_sms():
   url = 'http://site24.way2sms.com/Login1.action?'
@@ -55,10 +56,11 @@ def gpscallback(gps_data):
 	global message
 	current_gps_location=string_parse(gps_data.data)
 	message = comm_message + str(current_gps_location)
+	message = "+".join(message.split(' '))
 
 rospy.init_node('danger_alert', anonymous=True)
 rospy.Subscriber("gpsLocation", String, gpscallback)
 
-sleep(1)
+sleep(2)
 send_sms()
 

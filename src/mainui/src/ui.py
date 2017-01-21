@@ -30,9 +30,9 @@ def touchCallback(data):
 
 def executecommand(touch,prevtouch):
     if touch == 2 and prevtouch != 2:
-       # startlevelone()
         print "Level ONE"
         espeak.synth("LEVEL ONE")
+        startlevelone()
     elif touch == 3 and prevtouch != 3:
         print "Level TWO"
         espeak.synth("LEVEL TWO")
@@ -79,8 +79,11 @@ def startlevelzero():
     
 
 def startlevelone():
-    p1 = subprocess.Popen('rosrun navigation_api navigation_stt_tts_en.py', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-    p2 = subprocess.Popen('rosrun navigation_api headingcorrection.py', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    p1 = subprocess.Popen('roslaunch navigation_api navigation.launch', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    for line in p1.stdout.readlines():
+        print line
+    retval = p1.wait()
+    #p2 = subprocess.Popen('rosrun navigation_api headingcorrection.py', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 
 def startleveltwo():
     p1 = subprocess.Popen('python /home/pi/doda_ws/src/sms_api/danger_alert.py', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
@@ -101,7 +104,8 @@ def startlevelthree():
 
 
 if __name__ == '__main__':
-   
+    espeak.synth(" RETINA SQUARED UI ")
+    print " RETINA SQUARED UI"   
     listener()
    
 
