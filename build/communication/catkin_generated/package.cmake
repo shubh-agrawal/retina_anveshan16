@@ -1,7 +1,0 @@
-set(_CATKIN_CURRENT_PACKAGE "nrfcomm")
-set(nrfcomm_MAINTAINER "pi <pi@todo.todo>")
-set(nrfcomm_DEPRECATED "")
-set(nrfcomm_VERSION "0.0.0")
-set(nrfcomm_BUILD_DEPENDS "roscpp" "rospy" "std_msgs" "geometry_msgs" "navigation_api")
-set(nrfcomm_RUN_DEPENDS "roscpp" "rospy" "std_msgs" "geometry_msgs" "navigation_api")
-set(nrfcomm_BUILDTOOL_DEPENDS "catkin")

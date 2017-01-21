@@ -238,6 +238,7 @@ def update_next_waypoint_publish():
 	distance = vincenty(current_gps_location, next_waypoint).meters
 	
 	nav_msg.target_crdnts = str(navigation_dict['target_lat_lng_list'][-1][0]) + "%" + str(navigation_dict['target_lat_lng_list'][-1][1]) + "@"
+	nav_msg.start_crdnts = str(navigation_dict['target_lat_lng_list'][0][0]) + "%" + str(navigation_dict['target_lat_lng_list'][0][1]) + "@"
 	if (distance <= 15.00):
 		waypoint_index= waypoint_index+1
 		if (waypoint_index >= len(navigation_dict['target_lat_lng_list'])):
