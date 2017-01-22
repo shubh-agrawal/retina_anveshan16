@@ -60,7 +60,8 @@ def listener():
 
 
 if __name__ == '__main__':
-    listener()
+#    listener()
+    print "webdoda"
     try:
         rate = rospy.Rate(100)
         rate.sleep()

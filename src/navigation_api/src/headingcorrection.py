@@ -3,7 +3,7 @@ import rospy
 import RPi.GPIO as GPIO
 from navigation_api.msg import navigation_msg
 from geometry_msgs.msg import Quaternion
-from nrf24 import Nrf24
+#from nrf24 import Nrf24
 
 buzzerPin = 19
 targetheading = -1
@@ -52,5 +52,9 @@ if __name__ == '__main__':
         rate.sleep()
 
     except rospy.ROSInterruptException:
-        GPIO.cleanup()
+        GPIO.cleanup()        
         pass
+   
+    else:
+#        print "cleaannnn" 
+        GPIO.cleanup()
