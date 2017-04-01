@@ -11,6 +11,7 @@ import math
 
 sz = (1,) # size of array
 Q = 1e-5 # process variance
+Qgps = 1e-5 #gps variance
 
 # allocate space for arrays
 xhatX=np.zeros(sz)      # a posteri estimate of x
@@ -38,6 +39,7 @@ XhatprevY=0
 heading=0
 
 R = 0.1**2 # estimate of measurement variance, change to see effect
+Rgps = 0.1**4 #gps measurement variance
 
 # intial guesses 
 xhatX[0] = 0.0
@@ -52,58 +54,80 @@ def headingCallback(heading_data):
 
 def rightLegCallback(rightLegData):
 
-    global XhatprevX, XhatprevY, PprevX, PprevY, Q
-    global xhatminusX, xhatminusY, PminusX, PminusY, PX, PY, xhatX, xhatY, KX, KY
-    global heading, utm_coord, utm_zone, utm_zone_name, prevStep
-    if rightLegData.z != prevStep:
-	    # time update X
-	    xhatminusX[0] = XhatprevX
-	    PminusX[0] = PprevX+Q
+		global XhatprevX, XhatprevY, PprevX, PprevY, Q
+		global xhatminusX, xhatminusY, PminusX, PminusY, PX, PY, xhatX, xhatY, KX, KY
+		global heading, utm_coord, utm_zone, utm_zone_name, prevStep
+		if rightLegData.z != prevStep:
+			# time update X
+			xhatminusX[0] = XhatprevX
+			PminusX[0] = PprevX+Q
 
-	    # measurement update X
-	    KX[0] = PminusX[0]/( PminusX[0]+R)
-	    xhatX[0] = xhatminusX[0]+KX[0]*(rightLegData.z*0.01*math.cos(heading))
-	    PX[0] = (1-KX[0])*PminusX[0]
-	    XhatprevX=xhatX[0]
-	    PprevX=PminusX[0]
+	   	    # time update Y
+			xhatminusY[0] = XhatprevY
+			PminusY[0] = PprevY+Q
 
-	    # time update Y
-	    xhatminusY[0] = XhatprevY
-	    PminusY[0] = PprevY+Q
+			# measurement update X
+			KX[0] = PminusX[0]/( PminusX[0]+R)
+			xhatX[0] = xhatminusX[0]+KX[0]*(rightLegData.z*0.01*math.cos(heading))
+			PX[0] = (1-KX[0])*PminusX[0]
+			XhatprevX=xhatX[0]
+			PprevX=PminusX[0]
 
-	    # measurement update Y
-	    KY[0] = PminusY[0]/( PminusY[0]+R )
-	    xhatY[0] = xhatminusY[0]+KY[0]*(rightLegData.z*0.01*math.sin(heading))
-	    PY[0] = (1-KY[0])*PminusY[0]
-	    XhatprevY=xhatY[0]
-	    PprevY=PminusY[0]
-	    print xhatX[0]
-	    print xhatY[0]
+			# measurement update Y
+			KY[0] = PminusY[0]/( PminusY[0]+R )
+			xhatY[0] = xhatminusY[0]+KY[0]*(rightLegData.z*0.01*math.sin(heading))
+			PY[0] = (1-KY[0])*PminusY[0]
+			XhatprevY=xhatY[0]
+			PprevY=PminusY[0]
+			print xhatX[0]
+			print xhatY[0]
 
-	    (filtered_latitude, filtered_longitude) = utm.to_latlon(xhatY[0], xhatX[0], utm_zone, utm_zone_name)
+			(filtered_latitude, filtered_longitude) = utm.to_latlon(xhatY[0], xhatX[0], utm_zone, utm_zone_name)
 
-	    print "xhat | "+ str(filtered_latitude)
-	    print "yhat | "+ str(filtered_longitude)
-            pubstr=str(filtered_latitude)+"%"+str(filtered_longitude)+"@"
-	    gpspub.publish(pubstr)
-            
+			print "xhat | "+ str(filtered_latitude)
+			print "yhat | "+ str(filtered_longitude)
+		        pubstr=str(filtered_latitude)+"%"+str(filtered_longitude)+"@"
+			gpspub.publish(pubstr)
+		        
 
-    prevStep=rightLegData.z
-      
+		prevStep=rightLegData.z
+		  
 
 def gpsCallback(gps_msg):
-	global XhatprevX, XhatprevY
-	global utm_coord, utm_zone, utm_zone_name
-        gps_data=gps_msg.data
-	sep1 = gps_data.find('%')
-	sep2 = gps_data.find('@')
-	lati_local = gps_data[0:sep1]
-	longi_local = gps_data[sep1+1:sep2]
-	utm_coord = utm.from_latlon(float(lati_local), float(longi_local))
-	utm_zone = utm_coord[2]
-	utm_zone_name = utm_coord[3]
-	XhatprevY  = utm_coord[0] #easting
-	XhatprevX = utm_coord[1]  #northing
+		global XhatprevX, XhatprevY, PprevX, PprevY, Qgps
+		global xhatminusX, xhatminusY, PminusX, PminusY, PX, PY, xhatX, xhatY, KX, KY
+		global utm_coord, utm_zone, utm_zone_name
+
+		#measurement update X
+		xhatminusX[0] = XhatprevX
+		PminusX[0] = PprevX + Qgps
+	
+		#measurement update Y
+		xhatminuxY[0] = XhatprevY
+		PminusY[0] = PprevY + Qgps
+
+		gps_data=gps_msg.data
+		sep1 = gps_data.find('%')
+		sep2 = gps_data.find('@')
+		lati_local = gps_data[0:sep1]
+		longi_local = gps_data[sep1+1:sep2]
+		utm_coord = utm.from_latlon(float(lati_local), float(longi_local))
+		utm_zone = utm_coord[2]
+		utm_zone_name = utm_coord[3]
+
+		 # measurement update X
+		 KX[0] = PminusX[0]/( PminusX[0]+Rgps)
+		 xhatX[0] = xhatminusX[0]+KX[0]*(utm_coord[1] )
+		 PX[0] = (1-KX[0])*PminusX[0]
+		 XhatprevX=xhatX[0]
+		 PprevX=PminusX[0]
+
+		 # measurement update Y
+		 KY[0] = PminusY[0]/( PminusY[0]+Rgps )
+		 xhatY[0] = xhatminusY[0]+KY[0]*(utm_coord[0] )
+		 PY[0] = (1-KY[0])*PminusY[0]
+		 XhatprevY=xhatY[0]
+		 PprevY=PminusY[0]
 	
 
 def loop():

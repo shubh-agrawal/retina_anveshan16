@@ -1,0 +1,8 @@
+prefix=/home/pi/doda_ws/install
+
+Name: mainui
+Description: Description of mainui
+Version: 0.0.0
+Cflags: -I/home/pi/doda_ws/install/include
+Libs: -L/home/pi/doda_ws/install/lib 
+Requires: roscpp rospy std_msgs

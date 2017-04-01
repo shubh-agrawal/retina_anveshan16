@@ -1,0 +1,8 @@
+prefix=/home/pi/doda_ws/install
+
+Name: gps
+Description: Description of gps
+Version: 6.6.6
+Cflags: -I/home/pi/doda_ws/install/include
+Libs: -L/home/pi/doda_ws/install/lib 
+Requires: rospy roscpp std_msgs geometry_msgs

@@ -1,0 +1,8 @@
+prefix=/home/pi/doda_ws/install
+
+Name: localization
+Description: Description of localization
+Version: 0.0.0
+Cflags: 
+Libs: -L/home/pi/doda_ws/install/lib 
+Requires: 

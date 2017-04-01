@@ -1,0 +1,7 @@
+set(_CATKIN_CURRENT_PACKAGE "localization")
+set(localization_MAINTAINER "pi <siddharthjha@outlook.com>")
+set(localization_DEPRECATED "")
+set(localization_VERSION "0.0.0")
+set(localization_BUILD_DEPENDS "message_generation" "roscpp" "rospy" "std_msgs")
+set(localization_RUN_DEPENDS "message_runtime" "roscpp" "rospy" "std_msgs")
+set(localization_BUILDTOOL_DEPENDS "catkin")

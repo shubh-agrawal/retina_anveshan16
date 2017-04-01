@@ -1,0 +1,8 @@
+prefix=/home/pi/doda_ws/devel
+
+Name: navigation_api
+Description: Description of navigation_api
+Version: 0.0.0
+Cflags: -I/home/pi/doda_ws/devel/include
+Libs: -L/home/pi/doda_ws/devel/lib 
+Requires: 
