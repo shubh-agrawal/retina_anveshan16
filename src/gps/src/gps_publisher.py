@@ -26,9 +26,10 @@ def serialCallback_pub():
     
     except serial.serialutil.SerialException:
         pass                  
+    #print input_str
     lati = re.findall('GPGGA,.*?,([0.0-9.0]+),', input_str)
     longi = re.findall('GPGGA,.*?N,([0.0-9.0]+),E', input_str)
-
+    #print lati,longi
     if len(lati) != 0 and len(longi) != 0:
             if float(lati[0]) > 0 and float(longi[0]) > 0:
                 latitude = int(float(lati[0])/100) + (float(lati[0]) - (int(float(lati[0])/100.00))*100)/60.0

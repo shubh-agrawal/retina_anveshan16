@@ -65,10 +65,10 @@ if __name__ == '__main__':
                 step_length = 0
 
             rospy.loginfo(" stick x : " + str(sx) + " | stick y :" + str(sy) + " | stick z " + str(sz) + " | stick w : " + str(sw))
-            rospy.loginfo(" box x : " + str(bx) + " | box y :" + str(by) + " | box z " + str(bz) + " | box w : " + str(bw))
-            rospy.loginfo(" right x : " + str(rx) + " | right y : " + str(ry) + " | step_length : " + str(step_length))
+            rospy.loginfo(" box x : " + str(rx) + " | box y :" + str(ry) + " | box z " + str(rz) + " | box w : " + str(bw))
+            rospy.loginfo(" right x : " + str(rx) + " | right y : " + str(ry) + " | right z : " + str(rz) + " | step_length : " + str(step_length))
             sdata = Quaternion(sx,sy,sz,sw)
-	    bdata = Quaternion(bx,by,bz,bw)
+	    bdata = Quaternion(rx,ry,rz,bw)
             rdata  = Point32(rx,ry,step_length)
             bpub.publish(bdata)
 	    rpub.publish(rdata)

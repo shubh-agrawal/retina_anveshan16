@@ -44,7 +44,7 @@ def executecommand(touch,prevtouch):
     elif touch == 1 and prevtouch != 1:
         print "Level ZERO"
         espeak.synth("LEVEL ZERO")
-        #stopcustom()
+        stopcustom()
         
 #        rospy.loginfo("Retina Squared : Level One")
     

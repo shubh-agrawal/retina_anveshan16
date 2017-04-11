@@ -20,9 +20,9 @@ xhatminusX= np.zeros(sz)# a priori estimate of x
 PminusX=np.zeros(sz)    # a priori error estimate
 KX=np.zeros(sz)         # gain or blending factor
 
-xhatY=np.zeros(sz)      # a posteri estimate of x
+xhatY=np.zeros(sz)      # a posteri estimate of y
 PY=np.zeros(sz)         # a posteri error estimate
-xhatminusY=np.zeros(sz) # a priori estimate of x
+xhatminusY=np.zeros(sz) # a priori estimate of y
 PminusY=np.zeros(sz)    # a priori error estimate
 KY=np.zeros(sz)         # gain or blending factor
 
@@ -38,8 +38,8 @@ PprevY=0
 XhatprevY=0
 heading=0
 
-R = 0.1**2 # estimate of measurement variance, change to see effect
-Rgps = 0.1**4 #gps measurement variance
+R = 0.1**2 # imu measurement variance
+Rgps = 0.1**6 #gps measurement variance
 
 # intial guesses 
 xhatX[0] = 0.0
@@ -62,7 +62,7 @@ def rightLegCallback(rightLegData):
 			xhatminusX[0] = XhatprevX
 			PminusX[0] = PprevX+Q
 
-	   	    # time update Y
+       	   	        # time update Y
 			xhatminusY[0] = XhatprevY
 			PminusY[0] = PprevY+Q
 
@@ -103,7 +103,7 @@ def gpsCallback(gps_msg):
 		PminusX[0] = PprevX + Qgps
 	
 		#measurement update Y
-		xhatminuxY[0] = XhatprevY
+		xhatminusY[0] = XhatprevY
 		PminusY[0] = PprevY + Qgps
 
 		gps_data=gps_msg.data
@@ -115,19 +115,22 @@ def gpsCallback(gps_msg):
 		utm_zone = utm_coord[2]
 		utm_zone_name = utm_coord[3]
 
-		 # measurement update X
-		 KX[0] = PminusX[0]/( PminusX[0]+Rgps)
-		 xhatX[0] = xhatminusX[0]+KX[0]*(utm_coord[1] )
-		 PX[0] = (1-KX[0])*PminusX[0]
-		 XhatprevX=xhatX[0]
-		 PprevX=PminusX[0]
+		# measurement update X
+		KX[0] = PminusX[0]/( PminusX[0]+Rgps)
+		xhatX[0] = xhatminusX[0]+KX[0]*(utm_coord[1] - xhatminusX[0])
+		PX[0] = (1-KX[0])*PminusX[0]
+		XhatprevX=xhatX[0]
+		PprevX=PminusX[0]
+         	
+ 	        #measurement update Y
+		KY[0] = PminusY[0]/( PminusY[0]+Rgps )
+		xhatY[0] = xhatminusY[0]+KY[0]*(utm_coord[0] - xhatminusY[0])
+		PY[0] = (1-KY[0])*PminusY[0]
+		XhatprevY=xhatY[0]
+		PprevY=PminusY[0]
+                print "gpsvalX | "+ str(xhatX[0])
+                print "gpsvalY | "+ str(xhatY[0])
 
-		 # measurement update Y
-		 KY[0] = PminusY[0]/( PminusY[0]+Rgps )
-		 xhatY[0] = xhatminusY[0]+KY[0]*(utm_coord[0] )
-		 PY[0] = (1-KY[0])*PminusY[0]
-		 XhatprevY=xhatY[0]
-		 PprevY=PminusY[0]
 	
 
 def loop():
