@@ -9,8 +9,8 @@ import cookielib
 from getpass import getpass
 import sys, re
 
-username = "9933988118"
-passwd = "blackhole"
+username = "9999999999"
+passwd = "xxxxxxxxx"
 comm_message = "(Danger Alert) at GPS ->"
 message = "(Danger Alert) at GPS ->"
 current_gps_location=(-1,-1)
