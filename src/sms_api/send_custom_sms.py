@@ -13,10 +13,10 @@ import serial,time
 ser=serial.Serial('/dev/ttyUSB0',baudrate=9600,timeout=None)
 from espeak import espeak
 
-username = "9933988118"
-passwd = "blackhole"
+username = "9999999999"
+passwd = "xxxxxxxx"
 current_gps_location=(-1,-1)
-number = "9933988118"
+number = "9999999999"
 
 def stt_serial_input(str_output):
 	"A custom function for stt newline character #. Taken advantage of reading one byte"
